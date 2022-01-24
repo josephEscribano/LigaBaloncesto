@@ -54,7 +54,7 @@ public class RestJornadas {
         Response response;
         Either<ApiError, Jornada> resultado = jornadaService.saveJornada(jornada);
         if (resultado.isRight()) {
-            response = Response.status(Response.Status.OK)
+            response = Response.status(Response.Status.CREATED)
                     .entity(resultado.get())
                     .build();
         } else {
@@ -72,11 +72,11 @@ public class RestJornadas {
         Response response;
         Either<ApiError, Jornada> resultado = jornadaService.updateJornada(jornada);
         if (resultado.isRight()) {
-            response = Response.status(Response.Status.CREATED)
+            response = Response.status(Response.Status.OK)
                     .entity(resultado.get())
                     .build();
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }
@@ -95,7 +95,7 @@ public class RestJornadas {
                     .entity(resultado.get())
                     .build();
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }

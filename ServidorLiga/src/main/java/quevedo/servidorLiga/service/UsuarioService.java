@@ -39,8 +39,8 @@ public class UsuarioService {
         return daoUsuarios.saveUsuario(usuario);
     }
 
-    public Either<String, Integer> activacion(String codigo) {
-        return daoUsuarios.activacion(codigo);
+    public Either<String, Integer> activacion(String codigo,LocalDateTime fecha) {
+        return daoUsuarios.activacion(codigo,fecha);
     }
 
     public Either<String, String> getName(String codigo) {
@@ -50,11 +50,6 @@ public class UsuarioService {
     public Either<String, Integer> checkUserNameAndEmail(String userName, String correo) {
         return daoUsuarios.checkUserNameAndEmail(userName, correo);
     }
-
-    public boolean checkTime(LocalDateTime fecha, String codigo) {
-        return daoUsuarios.checkTime(fecha, codigo);
-    }
-
     public Either<String, Integer> changeDate(LocalDateTime fecha, String codigo) {
         return daoUsuarios.changeDate(fecha, codigo);
     }

@@ -3,7 +3,10 @@ user: root
 password: quevedo2dam
 driver: com.mysql.cj.jdbc.Driver
 host: smtp.gmail.com
-userMail: alumnosdamquevedo@gmail.com
-passwordMail: quevedo2021
+userMail: gradosuperior2021@gmail.com
+passwordMail: Stallings20
+
+#userMail: alumnosdamquevedo@gmail.com
+#passwordMail: quevedo2021
 
 

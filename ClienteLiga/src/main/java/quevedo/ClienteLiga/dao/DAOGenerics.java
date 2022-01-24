@@ -26,7 +26,7 @@ abstract class DAOGenerics {
             if (response.isSuccessful()) {
                 resultado = Either.right(response.body());
             } else {
-                if (Objects.equals(response.errorBody().contentType(), MediaType.get(ConstantesDAO.MEDIA_TYPE)) || Objects.equals(response.errorBody().contentType(), MediaType.get(ConstantesDAO.MEIDA_TYPE_ALT))) {
+                if (Objects.equals(response.errorBody().contentType(), MediaType.get(ConstantesDAO.APPLICATION_JSON)) || Objects.equals(response.errorBody().contentType(), MediaType.get(ConstantesDAO.APPLICATION_JSON_CHARSET_ISO_8859_1))) {
                     ApiError apiError = gson.fromJson(response.errorBody().string(), ApiError.class);
                     resultado = Either.left(apiError.getMessage());
                 } else {

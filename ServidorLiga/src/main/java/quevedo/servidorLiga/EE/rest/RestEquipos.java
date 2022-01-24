@@ -56,11 +56,11 @@ public class RestEquipos {
         Response response;
         Either<ApiError, Equipo> resultado = equipoService.saveEquipo(nombre);
         if (resultado.isRight()) {
-            response = Response.status(Response.Status.OK)
+            response = Response.status(Response.Status.CREATED)
                     .entity(resultado.get())
                     .build();
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }
@@ -74,11 +74,11 @@ public class RestEquipos {
         Response response;
         Either<ApiError, Equipo> resultado = equipoService.updateEquipo(equipo);
         if (resultado.isRight()) {
-            response = Response.status(Response.Status.CREATED)
+            response = Response.status(Response.Status.OK)
                     .entity(resultado.get())
                     .build();
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }
@@ -97,7 +97,7 @@ public class RestEquipos {
                     .entity(resultado.get())
                     .build();
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }

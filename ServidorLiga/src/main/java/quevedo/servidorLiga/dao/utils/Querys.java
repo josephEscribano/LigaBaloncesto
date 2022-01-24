@@ -4,7 +4,7 @@ public class Querys {
     //USUARIO
     public static final String SELECT_FROM_USUARIOS = "select * from usuarios";
     public static final String INSERT_USUARIO_REGISTRO = "INSERT INTO usuarios (username,correo,pass,codActivacion,confirmacion,idTipoUsuario,fechaLimite) values (?,?,?,?,?,?,?)";
-    public static final String UPDATE_CONFIRMACION = "update usuarios set confirmacion = ? where codActivacion = ? ";
+    public static final String UPDATE_CONFIRMACION = "update usuarios set confirmacion = ? where codActivacion = ? and fechaLimite > ? ";
     public static final String SELECT_NAME_POR_CODIGO = "select userName from usuarios where codActivacion = ? ";
     public static final String CHECK_USERNAME_CORREO = "select count(*) from usuarios where userName = ? or correo = ? ";
     public static final String SELECT_FECHA_LIMITE = "select fechaLimite from usuarios where codActivacion = ?";

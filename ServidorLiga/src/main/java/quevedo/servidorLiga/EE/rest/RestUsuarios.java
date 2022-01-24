@@ -169,11 +169,11 @@ public class RestUsuarios {
         Response response;
         Either<ApiError, Usuario> resultado = usuarioService.updateUsuario(usuarioUpdateDTO);
         if (resultado.isRight()) {
-            response = Response.status(Response.Status.CREATED)
+            response = Response.status(Response.Status.OK)
                     .entity(usuarioMapper.usuarioDTOMapper(resultado.get()))
                     .build();
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }
@@ -193,7 +193,7 @@ public class RestUsuarios {
                     .entity(resultado.get())
                     .build();
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }
@@ -227,7 +227,7 @@ public class RestUsuarios {
             }
 
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }

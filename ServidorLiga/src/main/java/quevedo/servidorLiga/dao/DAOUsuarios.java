@@ -132,12 +132,12 @@ public class DAOUsuarios {
 
     }
 
-    public Either<String, Integer> activacion(String codigo) {
+    public Either<String, Integer> activacion(String codigo,LocalDateTime fecha) {
         Either<String, Integer> resultado;
         try {
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dbConnectionPool.getHikariDataSource());
             resultado = Either.right(jdbcTemplate.update(Querys.UPDATE_CONFIRMACION
-                    , 1, codigo));
+                    , 1, codigo,fecha));
         } catch (CannotGetJdbcConnectionException e) {
             log.error(e.getMessage(), e);
             resultado = Either.left(ConstantesDao.ERROR_CONEXION);
@@ -173,20 +173,6 @@ public class DAOUsuarios {
 
         return resultado;
 
-    }
-
-    public boolean checkTime(LocalDateTime fecha, String codigo) {
-        boolean confirmacion = false;
-        try {
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(dbConnectionPool.getHikariDataSource());
-            LocalDateTime fechaLimite = jdbcTemplate.queryForObject(Querys.SELECT_FECHA_LIMITE, LocalDateTime.class, codigo);
-            confirmacion = fecha.isBefore(fechaLimite);
-        } catch (CannotGetJdbcConnectionException e) {
-            log.error(e.getMessage(), e);
-        }
-
-
-        return confirmacion;
     }
 
     public Either<String, Integer> changeDate(LocalDateTime fecha, String codigo) {

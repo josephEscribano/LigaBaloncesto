@@ -29,28 +29,26 @@ public class ServletActivacion extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String codigo = request.getParameter(ConstantesRest.ACTIVACION_CODIGO);
-        if (usuarioService.checkTime(LocalDateTime.now(ZoneId.of(ConstantesRest.ZONA_HORARIA)), codigo)) {
-            Either<String, Integer> activacion = usuarioService.activacion(codigo);
-            if (activacion.isRight()) {
-                if (activacion.get() > 0) {
-                    Either<String, String> resultadoName = usuarioService.getName(codigo);
-                    if (resultadoName.isRight()) {
-                        request.setAttribute(ConstantesRest.ACTIVACION_NAME, resultadoName.get());
-                        request.getRequestDispatcher(ConstantesRest.BIENVENIDA_JSP).forward(request, response);
-                    } else {
-                        request.getRequestDispatcher(ConstantesRest.ERROR_CONEXION_HTML).forward(request, response);
-                    }
+
+        Either<String, Integer> activacion = usuarioService.activacion(codigo,LocalDateTime.now(ZoneId.of(ConstantesRest.ZONA_HORARIA)));
+        if (activacion.isRight()) {
+            if (activacion.get() > 0) {
+                Either<String, String> resultadoName = usuarioService.getName(codigo);
+                if (resultadoName.isRight()) {
+                    request.setAttribute(ConstantesRest.ACTIVACION_NAME, resultadoName.get());
+                    request.getRequestDispatcher(ConstantesRest.BIENVENIDA_JSP).forward(request, response);
                 } else {
-                    request.getRequestDispatcher(ConstantesRest.ERROR_ACTIVACION_HTML).forward(request, response);
+                    request.getRequestDispatcher(ConstantesRest.ERROR_CONEXION_HTML).forward(request, response);
                 }
-
-
             } else {
-                request.getRequestDispatcher(ConstantesRest.ERROR_CONEXION_HTML).forward(request, response);
+                request.setAttribute(ConstantesRest.ACTIVACION_CODIGO, codigo);
+                request.getRequestDispatcher(ConstantesRest.TIEMPO_EXCEDIDO_JSP).forward(request, response);
+
             }
+
+
         } else {
-            request.setAttribute(ConstantesRest.ACTIVACION_CODIGO, codigo);
-            request.getRequestDispatcher(ConstantesRest.TIEMPO_EXCEDIDO_JSP).forward(request, response);
+            request.getRequestDispatcher(ConstantesRest.ERROR_ACTIVACION_HTML).forward(request, response);
         }
 
 

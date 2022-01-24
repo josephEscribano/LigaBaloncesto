@@ -94,7 +94,7 @@ public class RestPartidos {
                     .entity(resultado.get())
                     .build();
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }
@@ -112,7 +112,7 @@ public class RestPartidos {
                     .entity(resultado.get())
                     .build();
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }
@@ -131,7 +131,7 @@ public class RestPartidos {
                     .entity(resultado.get())
                     .build();
         } else {
-            response = Response.status(Response.Status.NOT_MODIFIED)
+            response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }

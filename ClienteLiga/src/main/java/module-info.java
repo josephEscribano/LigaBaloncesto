@@ -39,4 +39,6 @@ module ClienteLiga {
     exports quevedo.ClienteLiga.service;
     exports quevedo.ClienteLiga.dao.retrofit;
     exports quevedo.ClienteLiga.dao.utils;
+    exports quevedo.ClienteLiga.dao.di;
+    opens quevedo.ClienteLiga.dao.di;
 }
