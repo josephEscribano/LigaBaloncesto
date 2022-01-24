@@ -52,8 +52,7 @@ public class FXMLUsuariosController {
 
     public void loadUsuarios() {
         if (principal.getUsuarioDTO().getIdTipoUsuario().equals(ConstantesGUI.DOS)) {
-            Single<Either<String, List<UsuarioDTO>>> single = Single.fromCallable(serviceUsuarios::getAll)
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, List<UsuarioDTO>>> single = serviceUsuarios.getAll()
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -79,8 +78,7 @@ public class FXMLUsuariosController {
         if (principal.getUsuarioDTO().getIdTipoUsuario().equals(ConstantesGUI.DOS)) {
             UsuarioDTO usuarioDTO = lvUsuarios.getSelectionModel().getSelectedItem();
             if (usuarioDTO != null) {
-                Single<Either<String, UsuarioDTO>> single = Single.fromCallable(() -> serviceUsuarios.cambiarPass(usuarioDTO))
-                        .subscribeOn(Schedulers.io())
+                Single<Either<String, UsuarioDTO>> single =  serviceUsuarios.cambiarPass(usuarioDTO)
                         .observeOn(JavaFxScheduler.platform())
                         .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -103,8 +101,7 @@ public class FXMLUsuariosController {
             }
 
         } else {
-            Single<Either<String, UsuarioDTO>> single = Single.fromCallable(() -> serviceUsuarios.cambiarPass(principal.getUsuarioDTO()))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, UsuarioDTO>> single = serviceUsuarios.cambiarPass(principal.getUsuarioDTO())
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -127,16 +124,15 @@ public class FXMLUsuariosController {
 
 
     public void saveAdmin() {
-        Single<Either<String, UsuarioDTO>> single = Single.fromCallable(() -> {
-                    Either<String, UsuarioDTO> resultado;
-                    if (cbTipo.getValue().equals(ConstantesGUI.TIPO_ADMINISTRADOR)) {
-                        resultado = serviceUsuarios.saveAdmin(new UsuarioRegistroDTO(tfUsername.getText(), tfCorreo.getText(), tfPass.getText(), ConstantesGUI.DOS));
-                    } else {
-                        resultado = serviceUsuarios.saveUsuario(new UsuarioRegistroDTO(tfUsername.getText(), tfCorreo.getText(), tfPass.getText(), ConstantesGUI.UNO));
-                    }
-                    return resultado;
-                })
-                .subscribeOn(Schedulers.io())
+
+        Single<Either<String, UsuarioDTO>> resultado;
+
+        if (cbTipo.getValue().equals(ConstantesGUI.TIPO_ADMINISTRADOR)) {
+            resultado = serviceUsuarios.saveAdmin(new UsuarioRegistroDTO(tfUsername.getText(), tfCorreo.getText(), tfPass.getText(), ConstantesGUI.DOS));
+        } else {
+            resultado = serviceUsuarios.saveUsuario(new UsuarioRegistroDTO(tfUsername.getText(), tfCorreo.getText(), tfPass.getText(), ConstantesGUI.UNO));
+        }
+        Single<Either<String, UsuarioDTO>> single = resultado
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -172,8 +168,7 @@ public class FXMLUsuariosController {
             if (usuario != null) {
 
                 int index = lvUsuarios.getItems().indexOf(usuario);
-                Single<Either<String, UsuarioDTO>> single = Single.fromCallable(() -> serviceUsuarios.updateUsuario(new UsuarioUpdateDTO(usuario.getIdUsuario(), tfUsername.getText(), tfCorreo.getText())))
-                        .subscribeOn(Schedulers.io())
+                Single<Either<String, UsuarioDTO>> single = serviceUsuarios.updateUsuario(new UsuarioUpdateDTO(usuario.getIdUsuario(), tfUsername.getText(), tfCorreo.getText()))
                         .observeOn(JavaFxScheduler.platform())
                         .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -195,8 +190,7 @@ public class FXMLUsuariosController {
             }
         } else {
 
-            Single<Either<String, UsuarioDTO>> single = Single.fromCallable(() -> serviceUsuarios.updateUsuario(new UsuarioUpdateDTO(principal.getUsuarioDTO().getIdUsuario(), tfUsername.getText(), tfCorreo.getText())))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, UsuarioDTO>> single = serviceUsuarios.updateUsuario(new UsuarioUpdateDTO(principal.getUsuarioDTO().getIdUsuario(), tfUsername.getText(), tfCorreo.getText()))
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -224,8 +218,7 @@ public class FXMLUsuariosController {
 
         UsuarioDTO usuario = lvUsuarios.getSelectionModel().getSelectedItem();
         if (usuario != null) {
-            Single<Either<String, String>> single = Single.fromCallable(() -> serviceUsuarios.deleteUsuario(usuario.getIdUsuario()))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, String>> single = serviceUsuarios.deleteUsuario(usuario.getIdUsuario())
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 

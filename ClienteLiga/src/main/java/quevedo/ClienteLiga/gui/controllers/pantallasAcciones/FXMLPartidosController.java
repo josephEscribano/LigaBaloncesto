@@ -1,7 +1,6 @@
 package quevedo.ClienteLiga.gui.controllers.pantallasAcciones;
 
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.vavr.control.Either;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
@@ -71,8 +70,7 @@ public class FXMLPartidosController {
     }
 
     public void loadPartidos() {
-        Single<Either<String, List<Partido>>> single = Single.fromCallable(servicePartidos::getAll)
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, List<Partido>>> single = servicePartidos.getAll()
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -92,8 +90,7 @@ public class FXMLPartidosController {
 
 
     public void loadEquipos() {
-        Single<Either<String, List<Equipo>>> single = Single.fromCallable(serviceEquipo::getAll)
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, List<Equipo>>> single = serviceEquipo.getAll()
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -116,8 +113,7 @@ public class FXMLPartidosController {
 
     public void loadJornadas() {
 
-        Single<Either<String, List<Jornada>>> single = Single.fromCallable(serviceJornadas::getAll)
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, List<Jornada>>> single = serviceJornadas.getAll()
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -143,8 +139,7 @@ public class FXMLPartidosController {
         Jornada jornada = lvJornadas.getSelectionModel().getSelectedItem();
         Equipo equipoVisitante = lvEquiposVis.getSelectionModel().getSelectedItem();
         if (equipoLocal != null && jornada != null && equipoVisitante != null && !tfResultados.getText().isEmpty()) {
-            Single<Either<String, Partido>> single = Single.fromCallable(() -> servicePartidos.savePartido(new Partido(jornada.getIdJornada(), equipoLocal, equipoVisitante, tfResultados.getText())))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, Partido>> single = servicePartidos.savePartido(new Partido(jornada.getIdJornada(), equipoLocal, equipoVisitante, tfResultados.getText()))
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -170,8 +165,7 @@ public class FXMLPartidosController {
     public void deletePartido() {
         Partido partido = lvPartidos.getSelectionModel().getSelectedItem();
         if (partido != null) {
-            Single<Either<String, String>> single = Single.fromCallable(() -> servicePartidos.deletePartido(partido.getIdPartido()))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, String>> single = servicePartidos.deletePartido(partido.getIdPartido())
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -201,8 +195,7 @@ public class FXMLPartidosController {
         if (partido != null) {
             partido.setResultado(tfResultados.getText());
             int index = lvPartidos.getItems().indexOf(partido);
-            Single<Either<String, Partido>> single = Single.fromCallable(() -> servicePartidos.updatePartido(partido))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, Partido>> single = servicePartidos.updatePartido(partido)
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -236,8 +229,7 @@ public class FXMLPartidosController {
         String equipo = cbEquipos.getSelectionModel().getSelectedItem();
         if (equipo != null) {
 
-            Single<Either<String, List<Partido>>> single = Single.fromCallable(() -> servicePartidos.filtroEquipos(equipo))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, List<Partido>>> single = servicePartidos.filtroEquipos(equipo)
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -254,8 +246,7 @@ public class FXMLPartidosController {
         String jornada = cbJornadas.getSelectionModel().getSelectedItem();
         if (jornada != null) {
 
-            Single<Either<String, List<Partido>>> single = Single.fromCallable(() -> servicePartidos.filtrosJornadas(jornada))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, List<Partido>>> single = servicePartidos.filtrosJornadas(jornada)
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 

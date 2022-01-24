@@ -1,5 +1,6 @@
 package quevedo.ClienteLiga.service;
 
+import io.reactivex.rxjava3.core.Single;
 import io.vavr.control.Either;
 import quevedo.ClienteLiga.dao.DAOPartidos;
 import quevedo.common.modelos.Partido;
@@ -15,27 +16,27 @@ public class ServicePartidos {
         this.daoPartidos = daoPartidos;
     }
 
-    public Either<String, List<Partido>> getAll() {
+    public Single<Either<String, List<Partido>>> getAll() {
         return daoPartidos.getAll();
     }
 
-    public Either<String, List<Partido>> filtroEquipos(String equipo) {
+    public Single<Either<String, List<Partido>>> filtroEquipos(String equipo) {
         return daoPartidos.filtroEquipos(equipo);
     }
 
-    public Either<String, List<Partido>> filtrosJornadas(String jornada) {
+    public Single<Either<String, List<Partido>>> filtrosJornadas(String jornada) {
         return daoPartidos.filtrosJornadas(jornada);
     }
 
-    public Either<String, Partido> savePartido(Partido partido) {
+    public Single<Either<String, Partido>> savePartido(Partido partido) {
         return daoPartidos.savePartido(partido);
     }
 
-    public Either<String, Partido> updatePartido(Partido partido) {
+    public Single<Either<String, Partido>> updatePartido(Partido partido) {
         return daoPartidos.updatePartido(partido);
     }
 
-    public Either<String, String> deletePartido(String id) {
+    public Single<Either<String, String>> deletePartido(String id) {
         return daoPartidos.deletePartido(id);
     }
 }

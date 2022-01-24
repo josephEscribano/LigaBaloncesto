@@ -1,5 +1,7 @@
 package quevedo.ClienteLiga.dao;
 
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.vavr.control.Either;
 import quevedo.ClienteLiga.dao.retrofit.RetrofitJornadas;
 import quevedo.common.modelos.Jornada;
@@ -16,19 +18,19 @@ public class DAOJornadas extends DAOGenerics {
         this.retrofitJornadas = retrofitJornadas;
     }
 
-    public Either<String, List<Jornada>> getAll() {
-        return safeApiCall(retrofitJornadas.getJornadas());
+    public Single<Either<String, List<Jornada>>> getAll() {
+        return safeSingleApicall(retrofitJornadas.getJornadas()).subscribeOn(Schedulers.io());
     }
 
-    public Either<String, Jornada> insertJornada(Jornada jornada) {
-        return safeApiCall(retrofitJornadas.insertJornada(jornada));
+    public Single<Either<String, Jornada>> insertJornada(Jornada jornada) {
+        return safeSingleApicall(retrofitJornadas.insertJornada(jornada)).subscribeOn(Schedulers.io());
     }
 
-    public Either<String, Jornada> updateJornada(Jornada jornada) {
-        return safeApiCall(retrofitJornadas.updateJornada(jornada));
+    public Single<Either<String, Jornada>> updateJornada(Jornada jornada) {
+        return safeSingleApicall(retrofitJornadas.updateJornada(jornada)).subscribeOn(Schedulers.io());
     }
 
-    public Either<String, String> deleteJornada(String id) {
-        return safeApiCall(retrofitJornadas.deleteJornada(id));
+    public Single<Either<String, String>> deleteJornada(String id) {
+        return safeSingleApicall(retrofitJornadas.deleteJornada(id)).subscribeOn(Schedulers.io());
     }
 }

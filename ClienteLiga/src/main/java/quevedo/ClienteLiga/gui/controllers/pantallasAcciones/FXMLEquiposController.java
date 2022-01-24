@@ -37,8 +37,7 @@ public class FXMLEquiposController {
 
     public void loadEquipos() {
 
-        Single<Either<String, List<Equipo>>> single = Single.fromCallable(serviceEquipos::getAll)
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, List<Equipo>>> single = serviceEquipos.getAll()
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -59,8 +58,7 @@ public class FXMLEquiposController {
 
 
     public void insertEquipo() {
-        Single<Either<String, Equipo>> single = Single.fromCallable(() -> serviceEquipos.insertEquipo(tfNombre.getText()))
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, Equipo>> single = serviceEquipos.insertEquipo(tfNombre.getText())
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -89,8 +87,7 @@ public class FXMLEquiposController {
         if (equipo != null) {
             equipo.setNombreEquipo(tfNombre.getText());
             int index = lvEquipos.getItems().indexOf(equipo);
-            Single<Either<String, Equipo>> single = Single.fromCallable(() -> serviceEquipos.updateEquipo(equipo))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, Equipo>> single = serviceEquipos.updateEquipo(equipo)
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -117,8 +114,7 @@ public class FXMLEquiposController {
     public void deleteEquipo() {
         Equipo equipo = lvEquipos.getSelectionModel().getSelectedItem();
         if (equipo != null) {
-            Single<Either<String, String>> single = Single.fromCallable(() -> serviceEquipos.deleteEquipo(equipo.getIdEquipo()))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, String>> single = serviceEquipos.deleteEquipo(equipo.getIdEquipo())
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 

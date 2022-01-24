@@ -88,8 +88,7 @@ public class FXMLPrincipalController implements Initializable {
 
 
     public void doLogout() {
-        Single<Either<String, String>> single = Single.fromCallable(serviceUsuarios::doLogout)
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, String>> single = serviceUsuarios.doLogout()
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> root.setCursor(Cursor.DEFAULT));
 

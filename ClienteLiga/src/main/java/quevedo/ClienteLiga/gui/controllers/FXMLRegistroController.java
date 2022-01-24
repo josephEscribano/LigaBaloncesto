@@ -37,8 +37,7 @@ public class FXMLRegistroController {
 
     public void saveUsuario() {
 
-        Single<Either<String, UsuarioDTO>> single = Single.fromCallable(() -> serviceUsuarios.saveUsuario(new UsuarioRegistroDTO(tfUserName.getText(), tfCorreo.getText(), tfPass.getText(), "1")))
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, UsuarioDTO>> single = serviceUsuarios.saveUsuario(new UsuarioRegistroDTO(tfUserName.getText(), tfCorreo.getText(), tfPass.getText(), ConstantesGUI.UNO))
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 

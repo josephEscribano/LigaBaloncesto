@@ -36,8 +36,7 @@ public class FXMLLoginController {
     }
 
     public void doLogin() {
-        Single<Either<String, UsuarioDTO>> single = Single.fromCallable(() -> serviceUsuarios.doLogin(tfUser.getText(), tfPass.getText()))
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, UsuarioDTO>> single = serviceUsuarios.doLogin(tfUser.getText(), tfPass.getText())
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -57,8 +56,7 @@ public class FXMLLoginController {
     }
 
     public void reenviarCorreo() {
-        Single<Either<String, ApiRespuesta>> single = Single.fromCallable(() -> serviceUsuarios.reenviarCorreo(tfUser.getText()))
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, ApiRespuesta>> single = serviceUsuarios.reenviarCorreo(tfUser.getText())
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 

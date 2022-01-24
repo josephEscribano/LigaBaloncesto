@@ -1,5 +1,7 @@
 package quevedo.ClienteLiga.dao;
 
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.vavr.control.Either;
 import quevedo.ClienteLiga.dao.retrofit.RetrofitPartidos;
 import quevedo.common.modelos.Partido;
@@ -15,28 +17,28 @@ public class DAOPartidos extends DAOGenerics {
         this.retrofitPartidos = retrofitPartidos;
     }
 
-    public Either<String, List<Partido>> getAll() {
-        return safeApiCall(retrofitPartidos.getPartidos());
+    public Single<Either<String, List<Partido>>> getAll() {
+        return safeSingleApicall(retrofitPartidos.getPartidos()).subscribeOn(Schedulers.io());
     }
 
-    public Either<String, List<Partido>> filtroEquipos(String equipo) {
-        return safeApiCall(retrofitPartidos.filtroEquipos(equipo));
+    public Single<Either<String, List<Partido>>> filtroEquipos(String equipo) {
+        return safeSingleApicall(retrofitPartidos.filtroEquipos(equipo)).subscribeOn(Schedulers.io());
     }
 
-    public Either<String, List<Partido>> filtrosJornadas(String jornada) {
-        return safeApiCall(retrofitPartidos.filtroJornadas(jornada));
+    public Single<Either<String, List<Partido>>> filtrosJornadas(String jornada) {
+        return safeSingleApicall(retrofitPartidos.filtroJornadas(jornada)).subscribeOn(Schedulers.io());
     }
 
-    public Either<String, Partido> savePartido(Partido partido) {
-        return safeApiCall(retrofitPartidos.savePartido(partido));
+    public Single<Either<String, Partido>> savePartido(Partido partido) {
+        return safeSingleApicall(retrofitPartidos.savePartido(partido)).subscribeOn(Schedulers.io());
     }
 
-    public Either<String, Partido> updatePartido(Partido partido) {
-        return safeApiCall(retrofitPartidos.updatePartido(partido));
+    public Single<Either<String, Partido>> updatePartido(Partido partido) {
+        return safeSingleApicall(retrofitPartidos.updatePartido(partido)).subscribeOn(Schedulers.io());
     }
 
-    public Either<String, String> deletePartido(String id) {
-        return safeApiCall(retrofitPartidos.deletePartido(id));
+    public Single<Either<String, String>> deletePartido(String id) {
+        return safeSingleApicall(retrofitPartidos.deletePartido(id)).subscribeOn(Schedulers.io());
     }
 
 }

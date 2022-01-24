@@ -38,8 +38,7 @@ public class FXMLJornadasController {
 
     public void loadJornadas() {
 
-        Single<Either<String, List<Jornada>>> single = Single.fromCallable(serviceJornadas::getAll)
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, List<Jornada>>> single = serviceJornadas.getAll()
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -60,8 +59,7 @@ public class FXMLJornadasController {
     public void insertJornada(ActionEvent actionEvent) {
 
 
-        Single<Either<String, Jornada>> single = Single.fromCallable(() -> serviceJornadas.insertJornada(new Jornada(dpFecha.getValue())))
-                .subscribeOn(Schedulers.io())
+        Single<Either<String, Jornada>> single = serviceJornadas.insertJornada(new Jornada(dpFecha.getValue()))
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -90,8 +88,7 @@ public class FXMLJornadasController {
         if (jornada != null) {
             jornada.setFechaJornada(dpFecha.getValue());
             int index = lvJornada.getItems().indexOf(jornada);
-            Single<Either<String, Jornada>> single = Single.fromCallable(() -> serviceJornadas.updateJornada(jornada))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, Jornada>> single = serviceJornadas.updateJornada(jornada)
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -117,8 +114,7 @@ public class FXMLJornadasController {
 
         Jornada jornada = lvJornada.getSelectionModel().getSelectedItem();
         if (jornada != null) {
-            Single<Either<String, String>> single = Single.fromCallable(() -> serviceJornadas.deleteJornada(jornada.getIdJornada()))
-                    .subscribeOn(Schedulers.io())
+            Single<Either<String, String>> single =  serviceJornadas.deleteJornada(jornada.getIdJornada())
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 

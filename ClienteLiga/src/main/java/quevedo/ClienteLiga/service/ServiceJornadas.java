@@ -1,5 +1,6 @@
 package quevedo.ClienteLiga.service;
 
+import io.reactivex.rxjava3.core.Single;
 import io.vavr.control.Either;
 import quevedo.ClienteLiga.dao.DAOJornadas;
 import quevedo.common.modelos.Jornada;
@@ -16,19 +17,19 @@ public class ServiceJornadas {
         this.daoJornadas = daoJornadas;
     }
 
-    public Either<String, List<Jornada>> getAll() {
+    public Single<Either<String, List<Jornada>>> getAll() {
         return daoJornadas.getAll();
     }
 
-    public Either<String, Jornada> insertJornada(Jornada jornada) {
+    public Single<Either<String, Jornada>> insertJornada(Jornada jornada) {
         return daoJornadas.insertJornada(jornada);
     }
 
-    public Either<String, Jornada> updateJornada(Jornada jornada) {
+    public Single<Either<String, Jornada>> updateJornada(Jornada jornada) {
         return daoJornadas.updateJornada(jornada);
     }
 
-    public Either<String, String> deleteJornada(String id) {
+    public Single<Either<String, String>> deleteJornada(String id) {
         return daoJornadas.deleteJornada(id);
     }
 }
