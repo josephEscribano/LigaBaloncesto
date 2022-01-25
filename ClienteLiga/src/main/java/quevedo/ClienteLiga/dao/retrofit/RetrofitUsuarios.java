@@ -7,7 +7,6 @@ import quevedo.common.modelos.ApiRespuesta;
 import quevedo.common.modelos.UsuarioDTO;
 import quevedo.common.modelos.UsuarioRegistroDTO;
 import quevedo.common.modelos.UsuarioUpdateDTO;
-import retrofit2.Call;
 import retrofit2.http.*;
 
 import java.util.List;
