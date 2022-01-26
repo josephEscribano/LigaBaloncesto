@@ -48,6 +48,19 @@ public class DAOUsuarios {
         return resultado;
     }
 
+    public Either<ApiError,Usuario> getUsuario(String username){
+        Either<ApiError,Usuario> resultado;
+        try{
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(dbConnectionPool.getHikariDataSource());
+            resultado = Either.right(jdbcTemplate.queryForObject(Querys.SELECT_USUARIOBYNAME,BeanPropertyRowMapper.newInstance(Usuario.class)));
+        }catch (CannotGetJdbcConnectionException e) {
+            log.error(e.getMessage(), e);
+            resultado = Either.left(new ApiError(ConstantesDao.ERROR_CONEXION));
+        }
+
+        return resultado;
+    }
+
     public Either<ApiError, Usuario> doLogin(String username, String passCliente) {
         Either<ApiError, Usuario> resultado;
         try {

@@ -1,13 +1,18 @@
 package quevedo.servidorLiga.EE.rest;
 
+import io.jsonwebtoken.Jwts;
 import io.vavr.control.Either;
+import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.mail.MessagingException;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j2;
 import quevedo.common.errores.ApiError;
+import jakarta.security.enterprise.SecurityContext;
 import quevedo.common.modelos.ApiRespuesta;
 import quevedo.common.modelos.UsuarioDTO;
 import quevedo.common.modelos.UsuarioRegistroDTO;
@@ -22,8 +27,11 @@ import quevedo.servidorLiga.service.UsuarioService;
 import quevedo.servidorLiga.utils.CreateHash;
 import quevedo.servidorLiga.utils.Utils;
 
+import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,12 +47,18 @@ public class RestUsuarios {
     private final CreateHash createHash;
     private final MandarMail mandarMail;
 
+    private final SecurityContext security;
+    private final Key key;
+
     @Inject
-    public RestUsuarios(UsuarioService usuarioService, UsuarioMapper usuarioMapper, CreateHash createHash, MandarMail mandarMail) {
+    public RestUsuarios(UsuarioService usuarioService, UsuarioMapper usuarioMapper, CreateHash createHash,
+                        MandarMail mandarMail, SecurityContext security,@Named(ConstantesRest.JWT) Key key) {
         this.usuarioService = usuarioService;
         this.usuarioMapper = usuarioMapper;
         this.createHash = createHash;
         this.mandarMail = mandarMail;
+        this.security = security;
+        this.key = key;
     }
 
 
@@ -66,6 +80,37 @@ public class RestUsuarios {
         }
 
         return response;
+    }
+
+    @GET
+    @PermitAll
+    public Response doLogin(){
+        Response response;
+        Either<ApiError, Usuario> resultado = usuarioService.getUsuario("");
+
+        if (resultado.isRight()){
+            String token = Jwts.builder()
+                    .setSubject("Me")
+                    .setIssuer("Joe")
+                    .setExpiration(Date.from(LocalDateTime.now().plusMinutes(60).atZone(ZoneId.systemDefault())
+                            .toInstant()))
+                    .claim(resultado.get().getIdTipoUsuario(),resultado.get().getUserName())
+                    .signWith(key)
+                    .compact();
+
+            response = Response.ok(Base64.getUrlEncoder().encodeToString(key.getEncoded()))
+                    .entity(resultado.get())
+                    .header(HttpHeaders.AUTHORIZATION, token).build();
+        }else{
+            response = Response.status(Response.Status.NOT_FOUND)
+                    .entity(resultado.getLeft())
+                    .build();
+        }
+
+
+
+        return response;
+
     }
 
     @POST

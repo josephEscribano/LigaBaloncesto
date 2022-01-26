@@ -55,4 +55,5 @@ public class ConstantesRest {
     public static final String PATH_PARAMETER_NAME = "name";
     public static final String DESCONECTADO = "Desconectado";
     public static final String USUARIO_NO_ENCONTRADO = "El usuario introducido no ha sido encontrado o ya esta confirmada su cuenta";
+    public static final String JWT = "JWT";
 }

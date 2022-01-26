@@ -3,4 +3,5 @@ module Common {
 
     exports quevedo.common.errores;
     exports quevedo.common.modelos;
+    exports quevedo.common.utils;
 }

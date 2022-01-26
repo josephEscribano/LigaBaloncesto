@@ -86,5 +86,9 @@ public class UsuarioService {
         return daoUsuarios.reenviarCorreo(user, codigo, fecha);
     }
 
+    public Either<ApiError,Usuario> getUsuario(String username){
+        return daoUsuarios.getUsuario(username);
+    }
+
 
 }

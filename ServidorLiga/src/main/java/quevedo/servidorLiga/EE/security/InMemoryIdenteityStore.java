@@ -8,6 +8,7 @@ import jakarta.security.enterprise.credential.UsernamePasswordCredential;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStore;
 import quevedo.common.errores.ApiError;
+import quevedo.common.utils.ConstantesCommon;
 import quevedo.servidorLiga.EE.utils.ConstantesRest;
 import quevedo.servidorLiga.dao.modelos.Usuario;
 import quevedo.servidorLiga.service.UsuarioService;
@@ -39,9 +40,9 @@ public class InMemoryIdenteityStore implements IdentityStore {
             Either<ApiError, Usuario> resultado =usuarioService.doLogin(user.getCaller(),user.getPasswordAsString());
             if(resultado.isRight()){
                 if (resultado.get().getIdTipoUsuario().equals(ConstantesRest.DOS)){
-                    credentialValidationResult = new CredentialValidationResult("admin", Collections.singleton("admin"));
+                    credentialValidationResult = new CredentialValidationResult(ConstantesCommon.ADMIN, Collections.singleton(ConstantesCommon.ADMIN));
                 }else{
-                    credentialValidationResult = new CredentialValidationResult("normal",Collections.singleton("normal"));
+                    credentialValidationResult = new CredentialValidationResult(ConstantesCommon.NORMAL,Collections.singleton(ConstantesCommon.NORMAL));
                 }
             }
         }

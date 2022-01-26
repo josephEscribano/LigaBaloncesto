@@ -45,4 +45,5 @@ public class Querys {
     public static final String FILTRO_EQUIPO = "select idPartido,idJornada,e.idEquipo,e.nombreEquipo,eq.idEquipo,eq.nombreEquipo,resultado from partidos inner join (equipos e,equipos eq) on partidos.idEquipoLocal = e.idEquipo and partidos.idEquipoVisitante = eq.idEquipo where e.nombreEquipo = ? or eq.nombreEquipo = ? ";
     public static final String FILTRO_JORNADA = "select idPartido,idJornada,e.idEquipo,e.nombreEquipo,eq.idEquipo,eq.nombreEquipo,resultado from partidos inner join (equipos e,equipos eq) on partidos.idEquipoLocal = e.idEquipo and partidos.idEquipoVisitante = eq.idEquipo where idJornada = ?";
     public static final String UPDATE_CODIGO = "update usuarios set codActivacion = ?,fechaLimite = ? where userName = ? and confirmacion = ?";
+    public static final String SELECT_USUARIOBYNAME = "select * from usuarios where userName = ?";
 }

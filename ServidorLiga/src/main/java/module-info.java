@@ -11,5 +11,6 @@ module ServidorLiga {
     requires java.naming;
     requires spring.tx;
     requires Common;
+    requires jjwt.api;
 
 }
