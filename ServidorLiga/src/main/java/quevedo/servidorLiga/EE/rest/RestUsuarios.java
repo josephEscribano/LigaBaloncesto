@@ -1,6 +1,5 @@
 package quevedo.servidorLiga.EE.rest;
 
-import io.jsonwebtoken.Jwts;
 import io.vavr.control.Either;
 import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
@@ -31,7 +30,6 @@ import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,17 +46,15 @@ public class RestUsuarios {
     private final MandarMail mandarMail;
 
     private final SecurityContext security;
-    private final Key key;
 
     @Inject
     public RestUsuarios(UsuarioService usuarioService, UsuarioMapper usuarioMapper, CreateHash createHash,
-                        MandarMail mandarMail, SecurityContext security,@Named(ConstantesRest.JWT) Key key) {
+                        MandarMail mandarMail, SecurityContext security) {
         this.usuarioService = usuarioService;
         this.usuarioMapper = usuarioMapper;
         this.createHash = createHash;
         this.mandarMail = mandarMail;
         this.security = security;
-        this.key = key;
     }
 
 
@@ -86,21 +82,12 @@ public class RestUsuarios {
     @PermitAll
     public Response doLogin(){
         Response response;
-        Either<ApiError, Usuario> resultado = usuarioService.getUsuario("");
+        Either<ApiError, Usuario> resultado = usuarioService.getUsuario(security.getCallerPrincipal().getName());
 
         if (resultado.isRight()){
-            String token = Jwts.builder()
-                    .setSubject("Me")
-                    .setIssuer("Joe")
-                    .setExpiration(Date.from(LocalDateTime.now().plusMinutes(60).atZone(ZoneId.systemDefault())
-                            .toInstant()))
-                    .claim(resultado.get().getIdTipoUsuario(),resultado.get().getUserName())
-                    .signWith(key)
-                    .compact();
-
-            response = Response.ok(Base64.getUrlEncoder().encodeToString(key.getEncoded()))
-                    .entity(resultado.get())
-                    .header(HttpHeaders.AUTHORIZATION, token).build();
+            response = Response.status(Response.Status.OK)
+                    .entity(usuarioMapper.usuarioDTOMapper(resultado.get()))
+                    .build();
         }else{
             response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
@@ -175,7 +162,7 @@ public class RestUsuarios {
 
     @PUT
     @Path(ConstantesRest.PATH_CAMBIO_CODIGO)
-    public Response reenviarCorreo(@QueryParam(ConstantesRest.QUERY_PARAM_USER) String user) {
+    public Response reenviarCorreo(@QueryParam(ConstantesRest.PARAM_USER) String user) {
         Response response;
         String codigo = Utils.randomCode();
         Either<ApiError, Integer> resultado = usuarioService.reenviarCorreo(user, codigo, LocalDateTime.now(ZoneId.of(ConstantesRest.ZONA_HORARIA)).plusMinutes(1));

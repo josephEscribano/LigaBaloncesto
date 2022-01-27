@@ -38,7 +38,7 @@ public class ServletLogin extends HttpServlet {
         Either<ApiError, Usuario> resultado = usuarioService.doLogin(userName, pass);
         if (resultado.isRight()) {
             Usuario usuario = resultado.get();
-            request.getSession().setAttribute(ConstantesRest.QUERY_PARAM_USER, usuario);
+            request.getSession().setAttribute(ConstantesRest.PARAM_USER, usuario);
             String usuarioDTO = new Gson().toJson(usuarioMapper.usuarioDTOMapper(resultado.get()));
             PrintWriter out = response.getWriter();
             response.setContentType(MediaType.APPLICATION_JSON);

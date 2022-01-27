@@ -15,12 +15,14 @@ import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.Response;
 import quevedo.common.utils.ConstantesCommon;
 import quevedo.servidorLiga.EE.utils.ConstantesRest;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
+import java.util.Date;
 
 @ApplicationScoped
 public class JWTAuth implements HttpAuthenticationMechanism {
@@ -53,14 +55,26 @@ public class JWTAuth implements HttpAuthenticationMechanism {
 
                 if (c.getStatus() == CredentialValidationResult.Status.VALID) {
                     httpServletRequest.getSession().setAttribute(ConstantesCommon.LOGIN_PARAMETER, c);
+                    String token = Jwts.builder()
+                            .setExpiration(Date.from(LocalDateTime.now().plusMinutes(60).atZone(ZoneId.systemDefault())
+                                    .toInstant()))
+                            .claim(ConstantesRest.PARAM_USER,c.getCallerPrincipal().getName())
+                            .claim(ConstantesRest.GROUP,c.getCallerGroups())
+                            .signWith(key)
+                            .compact();
+                    //retornar 418 si es invalido
+                    httpServletResponse.setHeader(HttpHeaders.AUTHORIZATION,token);
                 }
-            }else{
+
+
+            }else if (valores[0].equalsIgnoreCase(ConstantesCommon.BEARER)){
                 Jws<Claims> jws = Jwts.parserBuilder()
                         .setSigningKey(key)
                         .build()
                         .parseClaimsJws(header);
 
-
+            }else{
+                return httpMessageContext.doNothing();
             }
 
         } else

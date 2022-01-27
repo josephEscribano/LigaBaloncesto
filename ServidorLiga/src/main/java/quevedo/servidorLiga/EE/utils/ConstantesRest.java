@@ -33,7 +33,7 @@ public class ConstantesRest {
     public static final String ERROR_CONEXION_HTML = "errorConexion.html";
     public static final String ERROR_CONTRASEÑA_HTML = "errorContraseña.html";
     public static final String TIEMPO_EXCEDIDO_CONTRASEÑA_HTML = "tiempoExcedidoContraseña.html";
-    public static final String QUERY_PARAM_USER = "user";
+    public static final String PARAM_USER = "user";
     public static final String PARAMETER_USERNAME = "username";
     public static final String SERVLET_VALUE_LOGIN = "/doLogin";
     public static final String SERVLET_NAME_LOGIN = "ServletLogin";
@@ -56,4 +56,5 @@ public class ConstantesRest {
     public static final String DESCONECTADO = "Desconectado";
     public static final String USUARIO_NO_ENCONTRADO = "El usuario introducido no ha sido encontrado o ya esta confirmada su cuenta";
     public static final String JWT = "JWT";
+    public static final String GROUP = "group";
 }

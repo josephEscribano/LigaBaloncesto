@@ -40,9 +40,9 @@ public class InMemoryIdenteityStore implements IdentityStore {
             Either<ApiError, Usuario> resultado =usuarioService.doLogin(user.getCaller(),user.getPasswordAsString());
             if(resultado.isRight()){
                 if (resultado.get().getIdTipoUsuario().equals(ConstantesRest.DOS)){
-                    credentialValidationResult = new CredentialValidationResult(ConstantesCommon.ADMIN, Collections.singleton(ConstantesCommon.ADMIN));
+                    credentialValidationResult = new CredentialValidationResult(resultado.get().getUserName(), Collections.singleton(ConstantesCommon.ADMIN));
                 }else{
-                    credentialValidationResult = new CredentialValidationResult(ConstantesCommon.NORMAL,Collections.singleton(ConstantesCommon.NORMAL));
+                    credentialValidationResult = new CredentialValidationResult(resultado.get().getUserName(),Collections.singleton(ConstantesCommon.NORMAL));
                 }
             }
         }

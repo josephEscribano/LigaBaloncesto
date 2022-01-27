@@ -24,7 +24,7 @@ public class FiltroAdmin implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
 
-        Usuario usuario = (Usuario) httpServletRequest.getSession().getAttribute(ConstantesRest.QUERY_PARAM_USER);
+        Usuario usuario = (Usuario) httpServletRequest.getSession().getAttribute(ConstantesRest.PARAM_USER);
         if (usuario == null || !usuario.getIdTipoUsuario().equals(ConstantesRest.DOS)) {
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
                     .entity(new ApiError(ConstantesRest.MENSAJE_SOLOADMIN))

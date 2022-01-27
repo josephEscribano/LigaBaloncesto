@@ -16,7 +16,7 @@ public class ServletLogout extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getSession().setAttribute(ConstantesRest.QUERY_PARAM_USER, null);
+        request.getSession().setAttribute(ConstantesRest.PARAM_USER, null);
         PrintWriter out = response.getWriter();
         response.setContentType(MediaType.TEXT_PLAIN);
         response.setCharacterEncoding(ConstantesRest.UTF_8);
