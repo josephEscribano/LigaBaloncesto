@@ -52,7 +52,7 @@ public class DAOUsuarios {
         Either<ApiError,Usuario> resultado;
         try{
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dbConnectionPool.getHikariDataSource());
-            resultado = Either.right(jdbcTemplate.queryForObject(Querys.SELECT_USUARIOBYNAME,BeanPropertyRowMapper.newInstance(Usuario.class)));
+            resultado = Either.right(jdbcTemplate.queryForObject(Querys.SELECT_USUARIOBYNAME,BeanPropertyRowMapper.newInstance(Usuario.class),username));
         }catch (CannotGetJdbcConnectionException e) {
             log.error(e.getMessage(), e);
             resultado = Either.left(new ApiError(ConstantesDao.ERROR_CONEXION));

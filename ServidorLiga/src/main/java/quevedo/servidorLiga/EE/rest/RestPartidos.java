@@ -20,7 +20,6 @@ import java.util.List;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes(MediaType.APPLICATION_JSON)
 @Log4j2
-@Login
 public class RestPartidos {
     private final PartidosService partidosService;
 
@@ -85,7 +84,7 @@ public class RestPartidos {
     }
 
     @POST
-    @Admin
+
     public Response savePartido(Partido partido) {
         Response response;
         Either<ApiError, Partido> resultado = partidosService.savePartido(partido);
@@ -103,7 +102,7 @@ public class RestPartidos {
     }
 
     @PUT
-    @Admin
+
     public Response updatePartido(Partido partido) {
         Response response;
         Either<ApiError, Partido> resultado = partidosService.updatePartido(partido);
@@ -122,7 +121,7 @@ public class RestPartidos {
 
     @DELETE
     @Path(ConstantesRest.PATH_ID)
-    @Admin
+
     public Response deletePartido(@PathParam(ConstantesRest.PARAM_ID) String id) {
         Response response;
         Either<ApiError, String> resultado = partidosService.deletePartido(id);

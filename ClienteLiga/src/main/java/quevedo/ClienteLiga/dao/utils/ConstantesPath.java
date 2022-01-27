@@ -2,7 +2,7 @@ package quevedo.ClienteLiga.dao.utils;
 
 public class ConstantesPath {
     public static final String PATH_API_EQUIPOS = "api/equipos";
-    public static final String PATH_DO_LOGIN = "doLogin";
+    public static final String PATH_DO_LOGIN = "api/doLogin";
     public static final String PATH_INSERT_EQUIPOS = "api/equipos/{name}";
     public static final String PATH_PARAMETER_NAME = "name";
     public static final String PATH_DELETE_EQUIPOS = "api/equipos/{id}";

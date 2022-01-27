@@ -1,6 +1,7 @@
 package quevedo.servidorLiga.EE.rest;
 
 import io.vavr.control.Either;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -19,7 +20,7 @@ import java.util.List;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes(MediaType.APPLICATION_JSON)
 @Log4j2
-@Login
+
 
 public class RestEquipos {
 
@@ -32,6 +33,7 @@ public class RestEquipos {
 
 
     @GET
+    @RolesAllowed("normal")
     public Response getAll() {
         Response response;
         Either<ApiError, List<Equipo>> resultado = equipoService.getAll();
@@ -51,7 +53,6 @@ public class RestEquipos {
 
     @POST
     @Path(ConstantesRest.PATH_NAME)
-    @Admin
     public Response saveEquipo(@PathParam(ConstantesRest.PATH_PARAMETER_NAME) String nombre) {
         Response response;
         Either<ApiError, Equipo> resultado = equipoService.saveEquipo(nombre);
@@ -69,7 +70,6 @@ public class RestEquipos {
     }
 
     @PUT
-    @Admin
     public Response updateEquipo(Equipo equipo) {
         Response response;
         Either<ApiError, Equipo> resultado = equipoService.updateEquipo(equipo);
@@ -87,7 +87,6 @@ public class RestEquipos {
     }
 
     @DELETE
-    @Admin
     @Path(ConstantesRest.PATH_ID)
     public Response deleteEquipo(@PathParam(ConstantesRest.PARAM_ID) String id) {
         Response response;

@@ -2,10 +2,12 @@ package quevedo.servidorLiga.EE.rest;
 
 import io.vavr.control.Either;
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.mail.MessagingException;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -49,7 +51,7 @@ public class RestUsuarios {
 
     @Inject
     public RestUsuarios(UsuarioService usuarioService, UsuarioMapper usuarioMapper, CreateHash createHash,
-                        MandarMail mandarMail, SecurityContext security) {
+                        MandarMail mandarMail, @Context SecurityContext security) {
         this.usuarioService = usuarioService;
         this.usuarioMapper = usuarioMapper;
         this.createHash = createHash;
@@ -59,8 +61,6 @@ public class RestUsuarios {
 
 
     @GET
-    @Login
-    @Admin
     public Response getAll() {
         Response response;
         Either<ApiError, List<Usuario>> resultado = usuarioService.getAll();
@@ -79,10 +79,12 @@ public class RestUsuarios {
     }
 
     @GET
+    @Path("doLogin")
     @PermitAll
-    public Response doLogin(){
+    //@Query(ConstantesDAO.PARAMETER_USER) String user, @Query(ConstantesDAO.PARAMETER_PASS
+    public Response doLogin(@QueryParam("username") String user){
         Response response;
-        Either<ApiError, Usuario> resultado = usuarioService.getUsuario(security.getCallerPrincipal().getName());
+        Either<ApiError, Usuario> resultado = usuarioService.getUsuario(user);
 
         if (resultado.isRight()){
             response = Response.status(Response.Status.OK)
@@ -102,8 +104,6 @@ public class RestUsuarios {
 
     @POST
     @Path(ConstantesRest.PATH_INSERT_ADMIN)
-    @Login
-    @Admin
     public Response insertAdministrador(UsuarioRegistroDTO usuarioRegistroDTO) {
         Response response;
         Either<String, Integer> checkUserNameAndEmail = usuarioService.checkUserNameAndEmail(usuarioRegistroDTO.getUserName(), usuarioRegistroDTO.getCorreo());
@@ -196,7 +196,7 @@ public class RestUsuarios {
     }
 
     @PUT
-    @Login
+
     public Response updateUsuario(UsuarioUpdateDTO usuarioUpdateDTO) {
         Response response;
         Either<ApiError, Usuario> resultado = usuarioService.updateUsuario(usuarioUpdateDTO);
@@ -215,8 +215,6 @@ public class RestUsuarios {
 
     @DELETE
     @Path(ConstantesRest.PATH_ID)
-    @Login
-    @Admin
     public Response deleteUsuario(@PathParam(ConstantesRest.PARAM_ID) String id) {
         Response response;
         Either<ApiError, String> resultado = usuarioService.deleteUsuario(id);
@@ -235,7 +233,6 @@ public class RestUsuarios {
 
     @PUT
     @Path(ConstantesRest.PATH_CAMBIO_PASS)
-    @Login
     public Response actualizarPass(UsuarioDTO usuarioDTO) {
         Response response;
         String codCambio = Utils.randomCode();

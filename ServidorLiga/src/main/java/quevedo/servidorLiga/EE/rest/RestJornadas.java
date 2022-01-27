@@ -20,7 +20,7 @@ import java.util.List;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes(MediaType.APPLICATION_JSON)
 @Log4j2
-@Login
+
 public class RestJornadas {
 
     private final JornadaService jornadaService;
@@ -49,7 +49,6 @@ public class RestJornadas {
     }
 
     @POST
-    @Admin
     public Response saveJornada(Jornada jornada) {
         Response response;
         Either<ApiError, Jornada> resultado = jornadaService.saveJornada(jornada);
@@ -67,7 +66,6 @@ public class RestJornadas {
     }
 
     @PUT
-    @Admin
     public Response updateJornada(Jornada jornada) {
         Response response;
         Either<ApiError, Jornada> resultado = jornadaService.updateJornada(jornada);
@@ -85,7 +83,6 @@ public class RestJornadas {
     }
 
     @DELETE
-    @Admin
     @Path(ConstantesRest.PATH_ID)
     public Response deleteJornada(@PathParam(ConstantesRest.PARAM_ID) String id) {
         Response response;
