@@ -1,7 +1,6 @@
 package quevedo.ClienteLiga.gui.controllers;
 
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.vavr.control.Either;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;

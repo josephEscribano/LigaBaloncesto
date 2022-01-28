@@ -2,6 +2,8 @@ package quevedo.servidorLiga.EE.rest;
 
 
 import io.vavr.control.Either;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -9,8 +11,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j2;
 import quevedo.common.errores.ApiError;
 import quevedo.common.modelos.Jornada;
-import quevedo.servidorLiga.EE.filtros.anotaciones.Admin;
-import quevedo.servidorLiga.EE.filtros.anotaciones.Login;
+import quevedo.common.utils.ConstantesCommon;
 import quevedo.servidorLiga.EE.utils.ConstantesRest;
 import quevedo.servidorLiga.service.JornadaService;
 
@@ -31,6 +32,7 @@ public class RestJornadas {
     }
 
     @GET
+    @RolesAllowed({ConstantesCommon.NORMAL, ConstantesCommon.ADMIN})
     public Response getAll() {
         Response response;
         Either<ApiError, List<Jornada>> resultado = jornadaService.getAll();
@@ -49,6 +51,7 @@ public class RestJornadas {
     }
 
     @POST
+    @RolesAllowed(ConstantesCommon.ADMIN)
     public Response saveJornada(Jornada jornada) {
         Response response;
         Either<ApiError, Jornada> resultado = jornadaService.saveJornada(jornada);
@@ -66,6 +69,7 @@ public class RestJornadas {
     }
 
     @PUT
+    @RolesAllowed(ConstantesCommon.ADMIN)
     public Response updateJornada(Jornada jornada) {
         Response response;
         Either<ApiError, Jornada> resultado = jornadaService.updateJornada(jornada);
@@ -84,6 +88,7 @@ public class RestJornadas {
 
     @DELETE
     @Path(ConstantesRest.PATH_ID)
+    @RolesAllowed(ConstantesCommon.ADMIN)
     public Response deleteJornada(@PathParam(ConstantesRest.PARAM_ID) String id) {
         Response response;
         Either<ApiError, String> resultado = jornadaService.delteJornada(id);

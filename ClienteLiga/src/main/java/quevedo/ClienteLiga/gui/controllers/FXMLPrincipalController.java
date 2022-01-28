@@ -1,17 +1,13 @@
 package quevedo.ClienteLiga.gui.controllers;
 
-import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.vavr.control.Either;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import org.pdfsam.rxjavafx.schedulers.JavaFxScheduler;
+import quevedo.ClienteLiga.dao.network.CacheDataUser;
 import quevedo.ClienteLiga.gui.controllers.pantallasAcciones.FXMLEquiposController;
 import quevedo.ClienteLiga.gui.controllers.pantallasAcciones.FXMLJornadasController;
 import quevedo.ClienteLiga.gui.controllers.pantallasAcciones.FXMLPartidosController;
@@ -28,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class FXMLPrincipalController implements Initializable {
+    private final CacheDataUser cache;
     private final Alert alert = new Alert(Alert.AlertType.INFORMATION);
     private final FXMLLoader loaderWelcome;
     private final FXMLLoader loaderEquipos;
@@ -61,7 +58,8 @@ public class FXMLPrincipalController implements Initializable {
 
 
     @Inject
-    public FXMLPrincipalController(FXMLLoader loaderWelcome, FXMLLoader loaderEquipos, FXMLLoader loaderJornadas, FXMLLoader loaderPartidos, FXMLLoader loaderLogin, FXMLLoader loaderRegistro, FXMLLoader loaderUsuarios, FXMLLoader loaderUsuarioNormal, ServiceUsuarios serviceUsuarios) {
+    public FXMLPrincipalController(CacheDataUser cache, FXMLLoader loaderWelcome, FXMLLoader loaderEquipos, FXMLLoader loaderJornadas, FXMLLoader loaderPartidos, FXMLLoader loaderLogin, FXMLLoader loaderRegistro, FXMLLoader loaderUsuarios, FXMLLoader loaderUsuarioNormal, ServiceUsuarios serviceUsuarios) {
+        this.cache = cache;
         this.loaderWelcome = loaderWelcome;
         this.loaderEquipos = loaderEquipos;
         this.loaderJornadas = loaderJornadas;
@@ -88,22 +86,10 @@ public class FXMLPrincipalController implements Initializable {
 
 
     public void doLogout() {
-        Single<Either<String, String>> single = serviceUsuarios.doLogout()
-                .observeOn(JavaFxScheduler.platform())
-                .doFinally(() -> root.setCursor(Cursor.DEFAULT));
-
-        single.subscribe(result -> result
-                        .peek(mensaje -> chargeLogin())
-                        .peekLeft(error -> {
-                            alert.setContentText(error);
-                            alert.showAndWait();
-                        }),
-                throwable -> {
-                    alert.setContentText(throwable.getMessage());
-                    alert.showAndWait();
-                });
-
-        root.setCursor(Cursor.WAIT);
+        cache.setUserName(null);
+        cache.setPass(null);
+        cache.setToken(null);
+        chargeLogin();
 
     }
 

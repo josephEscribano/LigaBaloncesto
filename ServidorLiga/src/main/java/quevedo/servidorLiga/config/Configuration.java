@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.InputStream;
 import java.util.Map;
 
 @Getter
@@ -21,13 +20,13 @@ public class Configuration {
     private String userMail;
     private String passwordMail;
 
-    void cargarConfig(InputStream file) {
+    public Configuration() {
 
         try {
             Yaml yaml = new Yaml();
             Iterable<Object> it;
 
-            it = yaml.loadAll(file);
+            it = yaml.loadAll(this.getClass().getClassLoader().getResourceAsStream(ConstantesConfig.RUTA_CONFIGURACION));
 
             Map<String, String> m = (Map) it.iterator().next();
 

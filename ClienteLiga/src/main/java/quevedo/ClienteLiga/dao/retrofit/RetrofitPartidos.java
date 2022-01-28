@@ -3,7 +3,6 @@ package quevedo.ClienteLiga.dao.retrofit;
 import io.reactivex.rxjava3.core.Single;
 import quevedo.ClienteLiga.dao.utils.ConstantesPath;
 import quevedo.common.modelos.Partido;
-import retrofit2.Call;
 import retrofit2.http.*;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package quevedo.servidorLiga.EE.security;
 
 import io.vavr.control.Either;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.security.enterprise.credential.Credential;
@@ -14,7 +13,7 @@ import quevedo.servidorLiga.EE.utils.ConstantesRest;
 import quevedo.servidorLiga.dao.modelos.Usuario;
 import quevedo.servidorLiga.service.UsuarioService;
 
-import java.util.Collections;
+import java.util.Set;
 
 import static jakarta.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 
@@ -35,15 +34,15 @@ public class InMemoryIdenteityStore implements IdentityStore {
     @Override
     public CredentialValidationResult validate(Credential credential) {
         CredentialValidationResult credentialValidationResult = INVALID_RESULT;
-        if (credential instanceof UsernamePasswordCredential){
-            UsernamePasswordCredential user = UsernamePasswordCredential.class.cast(credential);
+        if (credential instanceof UsernamePasswordCredential) {
+            UsernamePasswordCredential user = (UsernamePasswordCredential) credential;
 
-            Either<ApiError, Usuario> resultado =usuarioService.doLogin(user.getCaller(),user.getPasswordAsString());
-            if(resultado.isRight()){
-                if (resultado.get().getIdTipoUsuario().equals(ConstantesRest.DOS)){
-                    credentialValidationResult = new CredentialValidationResult(resultado.get().getUserName(), Collections.singleton(ConstantesCommon.ADMIN));
-                }else{
-                    credentialValidationResult = new CredentialValidationResult(resultado.get().getUserName(),Collections.singleton(ConstantesCommon.NORMAL));
+            Either<ApiError, Usuario> resultado = usuarioService.doLogin(user.getCaller(), user.getPasswordAsString());
+            if (resultado.isRight()) {
+                if (resultado.get().getIdTipoUsuario().equals(ConstantesRest.DOS)) {
+                    credentialValidationResult = new CredentialValidationResult(resultado.get().getUserName(), Set.of(ConstantesCommon.ADMIN, ConstantesCommon.NORMAL));
+                } else {
+                    credentialValidationResult = new CredentialValidationResult(resultado.get().getUserName(), Set.of(ConstantesCommon.NORMAL));
                 }
             }
         }

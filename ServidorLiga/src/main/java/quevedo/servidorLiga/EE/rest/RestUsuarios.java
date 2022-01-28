@@ -4,22 +4,17 @@ import io.vavr.control.Either;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.mail.MessagingException;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j2;
 import quevedo.common.errores.ApiError;
-import jakarta.security.enterprise.SecurityContext;
 import quevedo.common.modelos.ApiRespuesta;
 import quevedo.common.modelos.UsuarioDTO;
 import quevedo.common.modelos.UsuarioRegistroDTO;
 import quevedo.common.modelos.UsuarioUpdateDTO;
-import quevedo.servidorLiga.EE.filtros.anotaciones.Admin;
-import quevedo.servidorLiga.EE.filtros.anotaciones.Login;
+import quevedo.common.utils.ConstantesCommon;
 import quevedo.servidorLiga.EE.utils.ConstantesRest;
 import quevedo.servidorLiga.dao.mappers.UsuarioMapper;
 import quevedo.servidorLiga.dao.modelos.Usuario;
@@ -28,10 +23,8 @@ import quevedo.servidorLiga.service.UsuarioService;
 import quevedo.servidorLiga.utils.CreateHash;
 import quevedo.servidorLiga.utils.Utils;
 
-import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,20 +40,19 @@ public class RestUsuarios {
     private final CreateHash createHash;
     private final MandarMail mandarMail;
 
-    private final SecurityContext security;
 
     @Inject
     public RestUsuarios(UsuarioService usuarioService, UsuarioMapper usuarioMapper, CreateHash createHash,
-                        MandarMail mandarMail, @Context SecurityContext security) {
+                        MandarMail mandarMail) {
         this.usuarioService = usuarioService;
         this.usuarioMapper = usuarioMapper;
         this.createHash = createHash;
         this.mandarMail = mandarMail;
-        this.security = security;
     }
 
 
     @GET
+    @RolesAllowed(ConstantesCommon.ADMIN)
     public Response getAll() {
         Response response;
         Either<ApiError, List<Usuario>> resultado = usuarioService.getAll();
@@ -79,23 +71,21 @@ public class RestUsuarios {
     }
 
     @GET
-    @Path("doLogin")
-    @PermitAll
-    //@Query(ConstantesDAO.PARAMETER_USER) String user, @Query(ConstantesDAO.PARAMETER_PASS
-    public Response doLogin(@QueryParam("username") String user){
+    @Path(ConstantesRest.DO_LOGIN)
+    @RolesAllowed({ConstantesCommon.NORMAL, ConstantesCommon.ADMIN})
+    public Response doLogin(@QueryParam(ConstantesRest.PARAMETER_USERNAME) String user) {
         Response response;
         Either<ApiError, Usuario> resultado = usuarioService.getUsuario(user);
 
-        if (resultado.isRight()){
+        if (resultado.isRight()) {
             response = Response.status(Response.Status.OK)
                     .entity(usuarioMapper.usuarioDTOMapper(resultado.get()))
                     .build();
-        }else{
+        } else {
             response = Response.status(Response.Status.NOT_FOUND)
                     .entity(resultado.getLeft())
                     .build();
         }
-
 
 
         return response;
@@ -104,6 +94,7 @@ public class RestUsuarios {
 
     @POST
     @Path(ConstantesRest.PATH_INSERT_ADMIN)
+    @RolesAllowed(ConstantesCommon.ADMIN)
     public Response insertAdministrador(UsuarioRegistroDTO usuarioRegistroDTO) {
         Response response;
         Either<String, Integer> checkUserNameAndEmail = usuarioService.checkUserNameAndEmail(usuarioRegistroDTO.getUserName(), usuarioRegistroDTO.getCorreo());
@@ -114,7 +105,7 @@ public class RestUsuarios {
                 Usuario usuario = new Usuario(usuarioRegistroDTO.getUserName(), usuarioRegistroDTO.getCorreo(), passHasheada
                         , codActivacion, false, LocalDateTime.now(ZoneId.of(ConstantesRest.ZONA_HORARIA)).plusMinutes(1), usuarioRegistroDTO.getIdTipoUsuario());
                 Either<ApiError, Usuario> resultado = usuarioService.saveAdmin(usuario);
-                response = getResponseMail(usuarioRegistroDTO, codActivacion, resultado);
+                response = sendEmail(usuarioRegistroDTO, codActivacion, resultado);
             } else {
                 response = Response.status(Response.Status.NOT_FOUND)
                         .entity(new ApiError(ConstantesRest.DATOS_REPETIDOS))
@@ -143,7 +134,7 @@ public class RestUsuarios {
                         , codActivacion, false, LocalDateTime.now(ZoneId.of(ConstantesRest.ZONA_HORARIA)).plusMinutes(1), usuarioRegistroDTO.getIdTipoUsuario());
                 Either<ApiError, Usuario> resultado = usuarioService.saveUsuario(usuario);
 
-                response = getResponseMail(usuarioRegistroDTO, codActivacion, resultado);
+                response = sendEmail(usuarioRegistroDTO, codActivacion, resultado);
             } else {
                 response = Response.status(Response.Status.NOT_FOUND)
                         .entity(new ApiError(ConstantesRest.DATOS_REPETIDOS))
@@ -162,6 +153,7 @@ public class RestUsuarios {
 
     @PUT
     @Path(ConstantesRest.PATH_CAMBIO_CODIGO)
+    @PermitAll
     public Response reenviarCorreo(@QueryParam(ConstantesRest.PARAM_USER) String user) {
         Response response;
         String codigo = Utils.randomCode();
@@ -196,7 +188,7 @@ public class RestUsuarios {
     }
 
     @PUT
-
+    @RolesAllowed({ConstantesCommon.NORMAL, ConstantesCommon.ADMIN})
     public Response updateUsuario(UsuarioUpdateDTO usuarioUpdateDTO) {
         Response response;
         Either<ApiError, Usuario> resultado = usuarioService.updateUsuario(usuarioUpdateDTO);
@@ -215,6 +207,7 @@ public class RestUsuarios {
 
     @DELETE
     @Path(ConstantesRest.PATH_ID)
+    @RolesAllowed(ConstantesCommon.ADMIN)
     public Response deleteUsuario(@PathParam(ConstantesRest.PARAM_ID) String id) {
         Response response;
         Either<ApiError, String> resultado = usuarioService.deleteUsuario(id);
@@ -233,6 +226,7 @@ public class RestUsuarios {
 
     @PUT
     @Path(ConstantesRest.PATH_CAMBIO_PASS)
+    @RolesAllowed({ConstantesCommon.NORMAL, ConstantesCommon.ADMIN})
     public Response actualizarPass(UsuarioDTO usuarioDTO) {
         Response response;
         String codCambio = Utils.randomCode();
@@ -264,8 +258,8 @@ public class RestUsuarios {
         return response;
     }
 
-    //CODIGO DUPLICADO
-    private Response getResponseMail(UsuarioRegistroDTO usuarioRegistroDTO, String codActivacion, Either<ApiError, Usuario> resultado) {
+
+    private Response sendEmail(UsuarioRegistroDTO usuarioRegistroDTO, String codActivacion, Either<ApiError, Usuario> resultado) {
         Response response;
         if (resultado.isRight()) {
             try {

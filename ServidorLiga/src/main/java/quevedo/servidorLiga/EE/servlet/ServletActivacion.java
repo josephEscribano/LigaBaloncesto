@@ -30,7 +30,7 @@ public class ServletActivacion extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String codigo = request.getParameter(ConstantesRest.ACTIVACION_CODIGO);
 
-        Either<String, Integer> activacion = usuarioService.activacion(codigo,LocalDateTime.now(ZoneId.of(ConstantesRest.ZONA_HORARIA)));
+        Either<String, Integer> activacion = usuarioService.activacion(codigo, LocalDateTime.now(ZoneId.of(ConstantesRest.ZONA_HORARIA)));
         if (activacion.isRight()) {
             if (activacion.get() > 0) {
                 Either<String, String> resultadoName = usuarioService.getName(codigo);

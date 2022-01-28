@@ -35,10 +35,6 @@ public class ConstantesRest {
     public static final String TIEMPO_EXCEDIDO_CONTRASEÑA_HTML = "tiempoExcedidoContraseña.html";
     public static final String PARAM_USER = "user";
     public static final String PARAMETER_USERNAME = "username";
-    public static final String SERVLET_VALUE_LOGIN = "/doLogin";
-    public static final String SERVLET_NAME_LOGIN = "ServletLogin";
-    public static final String NO_LOGUEADO = "No estas logueado con ninguna cuenta";
-    public static final String MENSAJE_SOLOADMIN = "Solo los administradores pueden realizar estas tareas";
     public static final String DOS = "2";
     public static final String PATH_EQUIPOS = "equipos";
     public static final String PATH_JORNADAS = "jornadas";
@@ -57,4 +53,5 @@ public class ConstantesRest {
     public static final String USUARIO_NO_ENCONTRADO = "El usuario introducido no ha sido encontrado o ya esta confirmada su cuenta";
     public static final String JWT = "JWT";
     public static final String GROUP = "group";
+    public static final String DO_LOGIN = "doLogin";
 }

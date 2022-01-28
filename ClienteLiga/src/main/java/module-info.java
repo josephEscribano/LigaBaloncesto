@@ -19,7 +19,6 @@ module ClienteLiga {
     requires org.pdfsam.rxjavafx;
 
     opens quevedo.ClienteLiga.gui;
-    opens quevedo.ClienteLiga.dao.cookie;
     opens quevedo.ClienteLiga.gui.controllers;
     opens quevedo.ClienteLiga.gui.utils;
     opens quevedo.ClienteLiga.config;
@@ -30,7 +29,6 @@ module ClienteLiga {
 
     exports quevedo.ClienteLiga.gui;
     exports quevedo.ClienteLiga.dao;
-    exports quevedo.ClienteLiga.dao.cookie;
     exports quevedo.ClienteLiga.gui.controllers;
     exports quevedo.ClienteLiga.gui.utils;
     exports quevedo.ClienteLiga.config;
@@ -39,6 +37,6 @@ module ClienteLiga {
     exports quevedo.ClienteLiga.service;
     exports quevedo.ClienteLiga.dao.retrofit;
     exports quevedo.ClienteLiga.dao.utils;
-    exports quevedo.ClienteLiga.dao.di;
-    opens quevedo.ClienteLiga.dao.di;
+    exports quevedo.ClienteLiga.dao.network;
+    opens quevedo.ClienteLiga.dao.network;
 }

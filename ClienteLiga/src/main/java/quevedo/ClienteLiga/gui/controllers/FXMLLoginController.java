@@ -1,7 +1,6 @@
 package quevedo.ClienteLiga.gui.controllers;
 
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.vavr.control.Either;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
@@ -9,6 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.pdfsam.rxjavafx.schedulers.JavaFxScheduler;
+import quevedo.ClienteLiga.dao.network.CacheDataUser;
 import quevedo.ClienteLiga.service.ServiceUsuarios;
 import quevedo.common.modelos.ApiRespuesta;
 import quevedo.common.modelos.UsuarioDTO;
@@ -18,6 +18,7 @@ import javax.inject.Inject;
 public class FXMLLoginController {
     private final Alert alert = new Alert(Alert.AlertType.INFORMATION);
     private final ServiceUsuarios serviceUsuarios;
+    private final CacheDataUser cache;
     @FXML
     private TextField tfUser;
     @FXML
@@ -27,8 +28,9 @@ public class FXMLLoginController {
     private FXMLPrincipalController principal;
 
     @Inject
-    public FXMLLoginController(ServiceUsuarios serviceUsuarios) {
+    public FXMLLoginController(ServiceUsuarios serviceUsuarios, CacheDataUser cache) {
         this.serviceUsuarios = serviceUsuarios;
+        this.cache = cache;
     }
 
     public void setPrincipal(FXMLPrincipalController fxmlPrincipalController) {
@@ -36,7 +38,9 @@ public class FXMLLoginController {
     }
 
     public void doLogin() {
-        Single<Either<String, UsuarioDTO>> single = serviceUsuarios.doLogin(tfUser.getText(), tfPass.getText())
+        cache.setUserName(tfUser.getText());
+        cache.setPass(tfPass.getText());
+        Single<Either<String, UsuarioDTO>> single = serviceUsuarios.doLogin(tfUser.getText())
                 .observeOn(JavaFxScheduler.platform())
                 .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 

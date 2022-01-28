@@ -1,7 +1,6 @@
 package quevedo.ClienteLiga.gui.controllers.pantallasAcciones;
 
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.vavr.control.Either;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -114,7 +113,7 @@ public class FXMLJornadasController {
 
         Jornada jornada = lvJornada.getSelectionModel().getSelectedItem();
         if (jornada != null) {
-            Single<Either<String, String>> single =  serviceJornadas.deleteJornada(jornada.getIdJornada())
+            Single<Either<String, String>> single = serviceJornadas.deleteJornada(jornada.getIdJornada())
                     .observeOn(JavaFxScheduler.platform())
                     .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 

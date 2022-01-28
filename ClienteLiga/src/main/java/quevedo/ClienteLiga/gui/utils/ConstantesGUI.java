@@ -19,4 +19,5 @@ public class ConstantesGUI {
     public static final String MENSAJE_FILTROS = "Selecciona un equipo";
     public static final String SELECCIONA_UNA_JORNADA = "Selecciona una jornada";
     public static final String MENSAJE_BIENVENIDA = "Bienvenid@ ";
+    public static final String MENSAJE_ERROR_USUARIOADD = "Introduce usuario, correo y contraseña para crear un usuario nuevo";
 }

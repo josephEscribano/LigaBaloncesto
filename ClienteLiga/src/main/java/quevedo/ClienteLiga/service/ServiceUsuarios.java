@@ -20,12 +20,8 @@ public class ServiceUsuarios {
         this.daoUsuarios = daoUsuarios;
     }
 
-    public Single<Either<String, UsuarioDTO>> doLogin(String user, String pass) {
-        return daoUsuarios.doLogin(user, pass);
-    }
-
-    public Single<Either<String, String>> doLogout() {
-        return daoUsuarios.doLogout();
+    public Single<Either<String, UsuarioDTO>> doLogin(String user) {
+        return daoUsuarios.doLogin(user);
     }
 
     public Single<Either<String, List<UsuarioDTO>>> getAll() {

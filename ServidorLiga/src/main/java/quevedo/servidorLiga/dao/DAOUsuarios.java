@@ -48,12 +48,18 @@ public class DAOUsuarios {
         return resultado;
     }
 
-    public Either<ApiError,Usuario> getUsuario(String username){
-        Either<ApiError,Usuario> resultado;
-        try{
+    public Either<ApiError, Usuario> getUsuario(String username) {
+        Either<ApiError, Usuario> resultado;
+        try {
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dbConnectionPool.getHikariDataSource());
-            resultado = Either.right(jdbcTemplate.queryForObject(Querys.SELECT_USUARIOBYNAME,BeanPropertyRowMapper.newInstance(Usuario.class),username));
-        }catch (CannotGetJdbcConnectionException e) {
+            int encontrado = jdbcTemplate.queryForObject(Querys.SELECT_EXISTE_USERNAME, Integer.class, username);
+            if (encontrado > 0) {
+                resultado = Either.right(jdbcTemplate.queryForObject(Querys.SELECT_USUARIOBYNAME, BeanPropertyRowMapper.newInstance(Usuario.class), username));
+            } else {
+                resultado = Either.left(new ApiError(ConstantesDao.USUARIO_NO_ENCONTRADO));
+            }
+
+        } catch (CannotGetJdbcConnectionException e) {
             log.error(e.getMessage(), e);
             resultado = Either.left(new ApiError(ConstantesDao.ERROR_CONEXION));
         }
@@ -145,12 +151,12 @@ public class DAOUsuarios {
 
     }
 
-    public Either<String, Integer> activacion(String codigo,LocalDateTime fecha) {
+    public Either<String, Integer> activacion(String codigo, LocalDateTime fecha) {
         Either<String, Integer> resultado;
         try {
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dbConnectionPool.getHikariDataSource());
             resultado = Either.right(jdbcTemplate.update(Querys.UPDATE_CONFIRMACION
-                    , 1, codigo,fecha));
+                    , 1, codigo, fecha));
         } catch (CannotGetJdbcConnectionException e) {
             log.error(e.getMessage(), e);
             resultado = Either.left(ConstantesDao.ERROR_CONEXION);

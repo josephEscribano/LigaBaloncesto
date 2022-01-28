@@ -14,10 +14,7 @@ import java.util.List;
 public interface RetrofitUsuarios {
 
     @GET(ConstantesPath.PATH_DO_LOGIN)
-    Single<UsuarioDTO> doLogin(@Query(ConstantesDAO.PARAMETER_USER) String user, @Query(ConstantesDAO.PARAMETER_PASS) String pass);
-
-    @GET(ConstantesPath.PATH_LOGOUT)
-    Single<String> doLogout();
+    Single<UsuarioDTO> doLogin(@Query(ConstantesDAO.PARAMETER_USER) String user);
 
     @PUT(ConstantesPath.PATH_REENVIAR_CORREO)
     Single<ApiRespuesta> reenviarCorreo(@Query(ConstantesPath.PATH_PARAMETER_USER) String userName);

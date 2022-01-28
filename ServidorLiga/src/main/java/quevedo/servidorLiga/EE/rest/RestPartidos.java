@@ -2,6 +2,8 @@ package quevedo.servidorLiga.EE.rest;
 
 
 import io.vavr.control.Either;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -9,8 +11,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j2;
 import quevedo.common.errores.ApiError;
 import quevedo.common.modelos.Partido;
-import quevedo.servidorLiga.EE.filtros.anotaciones.Admin;
-import quevedo.servidorLiga.EE.filtros.anotaciones.Login;
+import quevedo.common.utils.ConstantesCommon;
 import quevedo.servidorLiga.EE.utils.ConstantesRest;
 import quevedo.servidorLiga.service.PartidosService;
 
@@ -30,6 +31,7 @@ public class RestPartidos {
 
 
     @GET
+    @RolesAllowed({ConstantesCommon.NORMAL, ConstantesCommon.ADMIN})
     public Response getAll() {
         Response response;
         Either<ApiError, List<Partido>> resultado = partidosService.getAll();
@@ -49,6 +51,7 @@ public class RestPartidos {
 
     @GET
     @Path(ConstantesRest.PATH_FILTRAR_EQUIPO)
+    @RolesAllowed(ConstantesCommon.NORMAL)
     public Response filtrarEquipo(@QueryParam(ConstantesRest.PATH_PARAMETER_EQUIPO) String equipo) {
         Response response;
         Either<ApiError, List<Partido>> resultado = partidosService.filtrarEquipo(equipo);
@@ -67,6 +70,7 @@ public class RestPartidos {
 
     @GET
     @Path(ConstantesRest.PATH_FILTRAR_JORNADA)
+    @RolesAllowed(ConstantesCommon.NORMAL)
     public Response filtrarJornada(@QueryParam(ConstantesRest.PATH_PARAMETER_JORNADA) String jornada) {
         Response response;
         Either<ApiError, List<Partido>> resultado = partidosService.filtrarJornada(jornada);
@@ -84,7 +88,7 @@ public class RestPartidos {
     }
 
     @POST
-
+    @RolesAllowed(ConstantesCommon.ADMIN)
     public Response savePartido(Partido partido) {
         Response response;
         Either<ApiError, Partido> resultado = partidosService.savePartido(partido);
@@ -102,7 +106,7 @@ public class RestPartidos {
     }
 
     @PUT
-
+    @RolesAllowed(ConstantesCommon.ADMIN)
     public Response updatePartido(Partido partido) {
         Response response;
         Either<ApiError, Partido> resultado = partidosService.updatePartido(partido);
@@ -121,7 +125,7 @@ public class RestPartidos {
 
     @DELETE
     @Path(ConstantesRest.PATH_ID)
-
+    @RolesAllowed(ConstantesCommon.ADMIN)
     public Response deletePartido(@PathParam(ConstantesRest.PARAM_ID) String id) {
         Response response;
         Either<ApiError, String> resultado = partidosService.deletePartido(id);

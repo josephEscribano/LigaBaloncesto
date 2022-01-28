@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -24,7 +23,10 @@ import quevedo.servidorLiga.EE.utils.ConstantesRest;
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 @Singleton
 @Log4j2
@@ -34,7 +36,7 @@ public class JWTAuth implements HttpAuthenticationMechanism {
     private final Key key;
 
     @Inject
-    public JWTAuth(InMemoryIdenteityStore identity,@Named(ConstantesRest.JWT) Key key) {
+    public JWTAuth(InMemoryIdenteityStore identity, @Named(ConstantesRest.JWT) Key key) {
         this.identity = identity;
         this.key = key;
     }
@@ -44,7 +46,7 @@ public class JWTAuth implements HttpAuthenticationMechanism {
                                                 HttpServletResponse httpServletResponse,
                                                 HttpMessageContext httpMessageContext) throws AuthenticationException {
 
-        CredentialValidationResult credentialValidationResult = CredentialValidationResult.INVALID_RESULT;
+        CredentialValidationResult credentialValidationResult;
 
         AuthenticationStatus authenticationStatus = httpMessageContext.doNothing();
         String header = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
@@ -57,38 +59,26 @@ public class JWTAuth implements HttpAuthenticationMechanism {
                 credentialValidationResult = identity.validate(new UsernamePasswordCredential(userPassSeparado[0], userPassSeparado[1]));
 
                 if (credentialValidationResult.getStatus() == CredentialValidationResult.Status.VALID) {
-                    String token = Jwts.builder()
-                            .setExpiration(Date.from(LocalDateTime.now().plusMinutes(60).atZone(ZoneId.systemDefault())
-                                    .toInstant()))
-                            .claim(ConstantesRest.PARAM_USER, credentialValidationResult.getCallerPrincipal().getName())
-                            .claim(ConstantesRest.GROUP, (new ArrayList<>(credentialValidationResult.getCallerGroups()).get(0)))
-                            .signWith(key)
-                            .compact();
-                    httpServletResponse.setHeader(HttpHeaders.AUTHORIZATION,token);
+                    httpServletResponse.setHeader(HttpHeaders.AUTHORIZATION, generarToken(credentialValidationResult));
                     authenticationStatus = httpMessageContext.notifyContainerAboutLogin(credentialValidationResult);
 
                 }
 
 
-            }else if (valores[0].equalsIgnoreCase(ConstantesCommon.BEARER)){
-                try{
+            } else if (valores[0].equalsIgnoreCase(ConstantesCommon.BEARER)) {
+                try {
                     Jws<Claims> jws = Jwts.parserBuilder()
                             .setSigningKey(key)
                             .build()
                             .parseClaimsJws(valores[1]);
-
-                    Set<String> set = new HashSet<>();
-                    set.add(jws.getBody().get(ConstantesRest.GROUP).toString());
-                    credentialValidationResult = new CredentialValidationResult(jws.getBody().get(ConstantesRest.PARAM_USER).toString(),set );
+                    List<String> groups = (List<String>) jws.getBody().get(ConstantesRest.GROUP);
+                    credentialValidationResult = new CredentialValidationResult(jws.getBody().get(ConstantesRest.PARAM_USER).toString(), new HashSet<>(groups));
                     authenticationStatus = httpMessageContext.notifyContainerAboutLogin(credentialValidationResult);
-                }catch (ExpiredJwtException ex){
-                    log.error(ex.getMessage(),ex);
-                    httpServletResponse.setHeader(HttpHeaders.EXPIRES,"Ha pasado el tiempo");
-
-                }catch (SignatureException signatureException){
-                    log.error(signatureException.getMessage(),signatureException);
-                    httpServletResponse.setStatus(401);
-
+                } catch (ExpiredJwtException ex) {
+                    log.error(ex.getMessage(), ex);
+                    httpServletResponse.setHeader(HttpHeaders.EXPIRES, ConstantesCommon.TOKEN_EXPIRADO);
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
                 }
 
             }
@@ -98,6 +88,16 @@ public class JWTAuth implements HttpAuthenticationMechanism {
 
         return authenticationStatus;
 
+    }
+
+    private String generarToken(CredentialValidationResult credentialValidationResult) {
+        return Jwts.builder()
+                .setExpiration(Date.from(LocalDateTime.now().plusMinutes(1).atZone(ZoneId.systemDefault())
+                        .toInstant()))
+                .claim(ConstantesRest.PARAM_USER, credentialValidationResult.getCallerPrincipal().getName())
+                .claim(ConstantesRest.GROUP, credentialValidationResult.getCallerGroups())
+                .signWith(key)
+                .compact();
     }
 
 }

@@ -21,12 +21,8 @@ public class DAOUsuarios extends DAOGenerics {
         this.retrofitUsuarios = retrofitUsuarios;
     }
 
-    public Single<Either<String, UsuarioDTO>> doLogin(String user, String pass) {
-        return safeSingleApicall(retrofitUsuarios.doLogin(user, pass)).subscribeOn(Schedulers.io());
-    }
-
-    public Single<Either<String, String>> doLogout() {
-        return safeSingleApicall(retrofitUsuarios.doLogout()).subscribeOn(Schedulers.io());
+    public Single<Either<String, UsuarioDTO>> doLogin(String user) {
+        return safeSingleApicall(retrofitUsuarios.doLogin(user)).subscribeOn(Schedulers.io());
     }
 
     public Single<Either<String, List<UsuarioDTO>>> getAll() {

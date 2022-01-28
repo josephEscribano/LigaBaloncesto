@@ -1,7 +1,6 @@
 package quevedo.ClienteLiga.gui.controllers.pantallasAcciones;
 
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.vavr.control.Either;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
@@ -78,7 +77,7 @@ public class FXMLUsuariosController {
         if (principal.getUsuarioDTO().getIdTipoUsuario().equals(ConstantesGUI.DOS)) {
             UsuarioDTO usuarioDTO = lvUsuarios.getSelectionModel().getSelectedItem();
             if (usuarioDTO != null) {
-                Single<Either<String, UsuarioDTO>> single =  serviceUsuarios.cambiarPass(usuarioDTO)
+                Single<Either<String, UsuarioDTO>> single = serviceUsuarios.cambiarPass(usuarioDTO)
                         .observeOn(JavaFxScheduler.platform())
                         .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
@@ -125,32 +124,40 @@ public class FXMLUsuariosController {
 
     public void saveAdmin() {
 
-        Single<Either<String, UsuarioDTO>> resultado;
 
-        if (cbTipo.getValue().equals(ConstantesGUI.TIPO_ADMINISTRADOR)) {
-            resultado = serviceUsuarios.saveAdmin(new UsuarioRegistroDTO(tfUsername.getText(), tfCorreo.getText(), tfPass.getText(), ConstantesGUI.DOS));
+        if (!tfUsername.getText().isEmpty() && !tfCorreo.getText().isEmpty() && !tfPass.getText().isEmpty()) {
+            Single<Either<String, UsuarioDTO>> resultado = null;
+            if (cbTipo.getValue().equals(ConstantesGUI.TIPO_ADMINISTRADOR)) {
+                resultado = serviceUsuarios.saveAdmin(new UsuarioRegistroDTO(tfUsername.getText(), tfCorreo.getText(), tfPass.getText(), ConstantesGUI.DOS));
+            } else {
+                resultado = serviceUsuarios.saveUsuario(new UsuarioRegistroDTO(tfUsername.getText(), tfCorreo.getText(), tfPass.getText(), ConstantesGUI.UNO));
+            }
+
+            Single<Either<String, UsuarioDTO>> single = resultado
+                    .observeOn(JavaFxScheduler.platform())
+                    .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
+
+            single.subscribe(result -> result
+                            .peek(usuarioDTO -> {
+                                alert.setContentText(ConstantesGUI.MENSAJE_CORREO + usuarioDTO.getUserName() + ConstantesGUI.MENSAJE_CORREO2);
+                                alert.showAndWait();
+                            })
+                            .peekLeft(error -> {
+                                alert.setContentText(error);
+                                alert.showAndWait();
+                            }),
+                    throwable -> {
+                        alert.setContentText(throwable.getMessage());
+                        alert.showAndWait();
+                    });
+
+            principal.getRoot().setCursor(Cursor.WAIT);
         } else {
-            resultado = serviceUsuarios.saveUsuario(new UsuarioRegistroDTO(tfUsername.getText(), tfCorreo.getText(), tfPass.getText(), ConstantesGUI.UNO));
+            alert.setContentText(ConstantesGUI.MENSAJE_ERROR_USUARIOADD);
+            alert.showAndWait();
         }
-        Single<Either<String, UsuarioDTO>> single = resultado
-                .observeOn(JavaFxScheduler.platform())
-                .doFinally(() -> principal.getRoot().setCursor(Cursor.DEFAULT));
 
-        single.subscribe(result -> result
-                        .peek(usuarioDTO -> {
-                            alert.setContentText(ConstantesGUI.MENSAJE_CORREO + usuarioDTO.getUserName() + ConstantesGUI.MENSAJE_CORREO2);
-                            alert.showAndWait();
-                        })
-                        .peekLeft(error -> {
-                            alert.setContentText(error);
-                            alert.showAndWait();
-                        }),
-                throwable -> {
-                    alert.setContentText(throwable.getMessage());
-                    alert.showAndWait();
-                });
 
-        principal.getRoot().setCursor(Cursor.WAIT);
     }
 
     public void showData(MouseEvent mouseEvent) {
